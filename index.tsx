@@ -1,9 +1,7 @@
-// Shim process.env harus berada di paling atas
-if (typeof window !== 'undefined') {
+// Shim wajib di baris paling atas
+if (typeof window !== 'undefined' && !window.process) {
   // @ts-ignore
-  window.process = window.process || { env: {} };
-  // @ts-ignore
-  window.process.env = window.process.env || {};
+  window.process = { env: {} };
 }
 
 import React from 'react';
@@ -12,7 +10,7 @@ import App from './App';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
-  throw new Error("Could not find root element to mount to");
+  throw new Error("Root element not found");
 }
 
 const root = ReactDOM.createRoot(rootElement);

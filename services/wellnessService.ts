@@ -1,20 +1,19 @@
 import { GoogleGenAI, Type } from "@google/genai";
 
 /**
- * Service untuk mendapatkan saran kesehatan internal.
+ * Mendapatkan saran kesehatan menggunakan model Gemini 3 Pro.
  */
 export const getBreakAdvice = async (breakType: string) => {
   try {
     const apiKey = process.env.API_KEY;
     if (!apiKey) {
-      console.warn("API Key is missing, using fallback advice.");
-      throw new Error("API Key not found");
+      throw new Error("API Key missing");
     }
     
     const ai = new GoogleGenAI({ apiKey });
     const response = await ai.models.generateContent({
-      model: 'gemini-3-pro-preview',
-      contents: `Berikan 1 tips kesehatan singkat dan 1 kutipan motivasi untuk karyawan gudang yang sedang mengambil istirahat "${breakType}". Jawab dalam Bahasa Indonesia yang profesional, ramah, dan membangkitkan semangat.`,
+      model: 'gemini-3-pro-preview', // Menggunakan Pro untuk instruksi kompleks
+      contents: `Berikan 1 tips kesehatan singkat dan 1 kutipan motivasi kerja untuk karyawan gudang yang sedang istirahat "${breakType}". Jawab dalam Bahasa Indonesia yang profesional dan ramah.`,
       config: {
         responseMimeType: "application/json",
         responseSchema: {
@@ -22,11 +21,11 @@ export const getBreakAdvice = async (breakType: string) => {
           properties: {
             tip: {
               type: Type.STRING,
-              description: 'Tips kesehatan singkat untuk pekerja warehouse.',
+              description: 'Tips kesehatan singkat.',
             },
             quote: {
               type: Type.STRING,
-              description: 'Kutipan motivasi profesional.',
+              description: 'Kutipan motivasi.',
             },
           },
           required: ["tip", "quote"],
@@ -34,12 +33,13 @@ export const getBreakAdvice = async (breakType: string) => {
       }
     });
     
-    return JSON.parse(response.text || '{}');
+    const text = response.text;
+    return JSON.parse(text || '{}');
   } catch (error) {
-    console.error("AI Service error:", error);
+    console.warn("Using fallback health advice:", error);
     return {
-      tip: "Regangkan otot tangan dan punggung Anda sejenak untuk menghindari kaku otot.",
-      quote: "Keselamatan dan kesehatan Anda adalah prioritas utama kami di warehouse."
+      tip: "Minum air putih yang cukup dan regangkan otot punggung Anda sejenak.",
+      quote: "Istirahat sejenak adalah investasi untuk produktivitas yang lebih besar."
     };
   }
 };
