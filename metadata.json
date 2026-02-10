@@ -1,0 +1,7 @@
+{
+  "name": "SmartBreak - Employee Pass System",
+  "description": "A robust and secure digital pass system for employees to manage their break times. Generates verifiable digital passes with QR codes for security checkpoints, tracks break history, and provides professional health suggestions during downtime.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
