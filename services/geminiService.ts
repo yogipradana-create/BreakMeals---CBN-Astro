@@ -1,12 +1,13 @@
-
 import { GoogleGenAI, Type } from "@google/genai";
-
-// Initialize the Google GenAI client with named parameter
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 export const getBreakAdvice = async (breakType: string) => {
   try {
-    // Calling generateContent with the model name and prompt using recommended responseSchema
+    const apiKey = process.env.API_KEY || '';
+    if (!apiKey) {
+      throw new Error("API Key not found");
+    }
+    
+    const ai = new GoogleGenAI({ apiKey });
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
       contents: `Berikan 1 tips kesehatan singkat dan 1 kutipan motivasi untuk karyawan yang sedang mengambil istirahat "${breakType}". Jawab dalam Bahasa Indonesia yang profesional dan ramah.`,
@@ -29,11 +30,9 @@ export const getBreakAdvice = async (breakType: string) => {
       }
     });
     
-    // Accessing .text property directly as it is a getter
-    const jsonStr = response.text || '{}';
-    return JSON.parse(jsonStr);
+    return JSON.parse(response.text || '{}');
   } catch (error) {
-    console.error("System Service Error:", error);
+    console.warn("Gemini Service Fallback:", error);
     return {
       tip: "Jangan lupa minum air putih dan regangkan otot Anda.",
       quote: "Istirahat sejenak adalah kunci produktivitas yang berkelanjutan."
