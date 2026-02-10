@@ -1,7 +1,9 @@
-// Shim harus berada di paling atas sebelum impor lainnya
-if (typeof window !== 'undefined' && !window.process) {
+// Shim process.env harus berada di paling atas
+if (typeof window !== 'undefined') {
   // @ts-ignore
-  window.process = { env: { API_KEY: '' } };
+  window.process = window.process || { env: {} };
+  // @ts-ignore
+  window.process.env = window.process.env || {};
 }
 
 import React from 'react';

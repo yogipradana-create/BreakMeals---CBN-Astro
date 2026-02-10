@@ -1,21 +1,20 @@
-
 import { GoogleGenAI, Type } from "@google/genai";
 
 /**
  * Service untuk mendapatkan saran kesehatan internal.
- * Inisialisasi dilakukan di dalam fungsi untuk memastikan API_KEY terbaru digunakan.
  */
 export const getBreakAdvice = async (breakType: string) => {
   try {
-    const apiKey = process.env.API_KEY || '';
+    const apiKey = process.env.API_KEY;
     if (!apiKey) {
-      throw new Error("API Key is not configured");
+      console.warn("API Key is missing, using fallback advice.");
+      throw new Error("API Key not found");
     }
     
     const ai = new GoogleGenAI({ apiKey });
     const response = await ai.models.generateContent({
-      model: 'gemini-3-flash-preview',
-      contents: `Berikan 1 tips kesehatan singkat dan 1 kutipan motivasi untuk karyawan yang sedang mengambil istirahat "${breakType}". Jawab dalam Bahasa Indonesia yang profesional dan ramah.`,
+      model: 'gemini-3-pro-preview',
+      contents: `Berikan 1 tips kesehatan singkat dan 1 kutipan motivasi untuk karyawan gudang yang sedang mengambil istirahat "${breakType}". Jawab dalam Bahasa Indonesia yang profesional, ramah, dan membangkitkan semangat.`,
       config: {
         responseMimeType: "application/json",
         responseSchema: {
@@ -23,11 +22,11 @@ export const getBreakAdvice = async (breakType: string) => {
           properties: {
             tip: {
               type: Type.STRING,
-              description: 'Tips kesehatan singkat.',
+              description: 'Tips kesehatan singkat untuk pekerja warehouse.',
             },
             quote: {
               type: Type.STRING,
-              description: 'Kutipan motivasi.',
+              description: 'Kutipan motivasi profesional.',
             },
           },
           required: ["tip", "quote"],
@@ -35,14 +34,12 @@ export const getBreakAdvice = async (breakType: string) => {
       }
     });
     
-    const jsonStr = response.text || '{}';
-    return JSON.parse(jsonStr);
+    return JSON.parse(response.text || '{}');
   } catch (error) {
-    console.warn("AI Service fallback triggered:", error);
-    // Fallback data jika service mengalami gangguan atau API key tidak ada
+    console.error("AI Service error:", error);
     return {
-      tip: "Jangan lupa minum air putih dan regangkan otot Anda sejenak.",
-      quote: "Kualitas kerja ditentukan oleh kualitas istirahat Anda."
+      tip: "Regangkan otot tangan dan punggung Anda sejenak untuk menghindari kaku otot.",
+      quote: "Keselamatan dan kesehatan Anda adalah prioritas utama kami di warehouse."
     };
   }
 };
