@@ -4,10 +4,7 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   plugins: [react()],
   define: {
-    // Memberikan objek process.env yang aman ke browser
-    'process.env': {
-      API_KEY: JSON.stringify(process.env.API_KEY || '')
-    },
+    'process.env.API_KEY': JSON.stringify(process.env.API_KEY || ''),
     'global': 'window'
   },
   server: {
@@ -16,6 +13,7 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist',
-    sourcemap: false
+    sourcemap: false,
+    emptyOutDir: true
   }
 });
