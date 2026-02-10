@@ -1,4 +1,4 @@
-// Shim harus di baris paling atas untuk menghindari ReferenceError
+// Shim wajib di baris paling atas
 if (typeof window !== 'undefined') {
   // @ts-ignore
   window.process = window.process || { env: {} };

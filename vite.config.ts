@@ -4,7 +4,7 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   plugins: [react()],
   define: {
-    // Memastikan process.env terdefinisi di browser tanpa menyebabkan error
+    // Memberikan objek process.env yang aman ke browser
     'process.env': {
       API_KEY: JSON.stringify(process.env.API_KEY || '')
     },
