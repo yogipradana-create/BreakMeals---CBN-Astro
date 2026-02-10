@@ -5,14 +5,15 @@ import { GoogleGenAI, Type } from "@google/genai";
  */
 export const getBreakAdvice = async (breakType: string) => {
   try {
-    const apiKey = process.env.API_KEY;
+    const apiKey = process.env.API_KEY || '';
     if (!apiKey) {
-      throw new Error("API Key missing");
+      console.warn("API Key missing, using local fallback.");
+      return getFallbackAdvice();
     }
     
     const ai = new GoogleGenAI({ apiKey });
     const response = await ai.models.generateContent({
-      model: 'gemini-3-pro-preview', // Menggunakan Pro untuk instruksi kompleks
+      model: 'gemini-3-pro-preview',
       contents: `Berikan 1 tips kesehatan singkat dan 1 kutipan motivasi kerja untuk karyawan gudang yang sedang istirahat "${breakType}". Jawab dalam Bahasa Indonesia yang profesional dan ramah.`,
       config: {
         responseMimeType: "application/json",
@@ -33,13 +34,14 @@ export const getBreakAdvice = async (breakType: string) => {
       }
     });
     
-    const text = response.text;
-    return JSON.parse(text || '{}');
+    return JSON.parse(response.text || '{}');
   } catch (error) {
-    console.warn("Using fallback health advice:", error);
-    return {
-      tip: "Minum air putih yang cukup dan regangkan otot punggung Anda sejenak.",
-      quote: "Istirahat sejenak adalah investasi untuk produktivitas yang lebih besar."
-    };
+    console.error("Gemini service error:", error);
+    return getFallbackAdvice();
   }
 };
+
+const getFallbackAdvice = () => ({
+  tip: "Minum air putih yang cukup dan regangkan otot punggung Anda sejenak.",
+  quote: "Istirahat sejenak adalah investasi untuk produktivitas yang lebih besar."
+});

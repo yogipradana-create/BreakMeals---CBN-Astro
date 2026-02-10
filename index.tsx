@@ -1,7 +1,9 @@
-// Shim wajib di baris paling atas
-if (typeof window !== 'undefined' && !window.process) {
+// Shim harus di baris paling atas untuk menghindari ReferenceError
+if (typeof window !== 'undefined') {
   // @ts-ignore
-  window.process = { env: {} };
+  window.process = window.process || { env: {} };
+  // @ts-ignore
+  window.process.env = window.process.env || {};
 }
 
 import React from 'react';
